@@ -1,0 +1,37 @@
+name: Deploy Concrete Demo to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ clone repo
+      - uses: actions/checkout@v3
+
+      # 2️⃣ نصب Node
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      # 3️⃣ نصب dependency
+      - name: Install dependencies
+        run: npm install
+
+      # 4️⃣ build پروژه
+      - name: Build
+        run: npm run build
+
+      # 5️⃣ deploy روی gh-pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v6
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          force_orphan: true   # overwrite کامل شاخه gh-pages
