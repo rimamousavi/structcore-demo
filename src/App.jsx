@@ -21,8 +21,8 @@ export default function App() {
   const [params, setParams] = useState({
     cement: 350,   
     water: 180,    
-    coarse_agg: 950, 
-    fine_agg: 750,     
+    aggregate: 950, 
+    sand: 750,     
     curing_days: 28        
   });
 
@@ -32,11 +32,11 @@ export default function App() {
   const runAnalysis = () => {
     setCalculating(true);
     setTimeout(() => {
-      const { cement, water, curing_days, coarse_agg, fine_agg } = params;
+      const { cement, water, curing_days, aggregate, sand } = params;
       const wc_ratio = water / cement;
       let raw_fc = (85 * Math.pow(0.12, wc_ratio)); 
       const time_factor = 0.35 * Math.log(curing_days) + 0.15;
-      const packing_density = (coarse_agg + fine_agg) / 1850;
+      const packing_density = (aggregate + sand) / 1850;
       const noise = (Math.random() * 0.4) - 0.2;
       let final_fc = (raw_fc * time_factor * packing_density + noise).toFixed(2);
       
@@ -98,7 +98,7 @@ export default function App() {
             <GuideStep 
               icon={<Beaker className="text-purple-500" />} 
               title="2. Structural Logic" 
-              desc="The system automatically calculates W/C ratios and packing density based on empirical formulas."
+              desc="The system automatically calculates W/C ratios based on empirical formulas."
             />
             <GuideStep 
               icon={<ShieldCheck className="text-emerald-500" />} 
@@ -145,7 +145,7 @@ export default function App() {
                 <div className="space-y-8">
                   <InputControl 
                     label="Cementitious" 
-                    info="Cement content per cubic meter"
+                    info="Cement "
                     sub="kg/m³" 
                     name="cement" 
                     value={params.cement} 
@@ -154,7 +154,7 @@ export default function App() {
                   />
                   <InputControl 
                     label="Free Water" 
-                    info="Net water content (Impacts porosity)"
+                    info="Water "
                     sub="kg/m³" 
                     name="water" 
                     value={params.water} 
@@ -163,14 +163,30 @@ export default function App() {
                   />
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <InputControl label="Coarse Agg." sub="kg/m³" name="coarse_agg" value={params.coarse_agg} min={850} max={1150} onChange={updateParam} />
-                    <InputControl label="Fine Agg." sub="kg/m³" name="fine_agg" value={params.fine_agg} min={600} max={950} onChange={updateParam} />
+                    <InputControl 
+                      label="Coarse Aggregate" 
+                      info="Aggregate "
+                      sub="kg/m³" 
+                      name="aggregate" 
+                      value={params.aggregate} 
+                      min={850} max={1150} 
+                      onChange={updateParam} 
+                    />
+                    <InputControl 
+                      label="Fine Aggregate" 
+                      info="Sand "
+                      sub="kg/m³" 
+                      name="sand" 
+                      value={params.sand} 
+                      min={600} max={950} 
+                      onChange={updateParam} 
+                    />
                   </div>
 
                   <div className="pt-6 border-t border-slate-50">
                     <InputControl 
-                      label="Curing Period" 
-                      info="Duration of hydration (Standard is 28 days)"
+                      label="Curing Age" 
+                      info="Maturity period "
                       sub="Days" 
                       name="curing_days" 
                       value={params.curing_days} 
@@ -246,7 +262,7 @@ export default function App() {
                 />
                 <MetricCard 
                   label="Est. Density" 
-                  value={Math.round(params.coarse_agg + params.fine_agg + params.cement + params.water)} 
+                  value={Math.round(params.aggregate + params.sand + params.cement + params.water)} 
                   unit="kg"
                 />
               </div>
